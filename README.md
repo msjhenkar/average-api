@@ -15,6 +15,7 @@ A REST API built with Node.js and Express that calculates the running average of
 
 - Node.js and npm
 - Git
+- Postman (optional, for manual API testing)
 
 ## Installation
 
@@ -31,19 +32,19 @@ A REST API built with Node.js and Express that calculates the running average of
    npm install
    ```
 
-## Run the server
+## Run the Server
 
 ```bash
 npm start
 ```
 
-The API will run at `http://localhost:3000`.
+The API runs at `http://localhost:3000`.
 
 ## API Reference
 
 ### POST `/average`
 
-Accepts a JSON request containing a number.
+Accepts a JSON request containing a number and returns the running average.
 
 **Request body:**
 
@@ -53,7 +54,7 @@ Accepts a JSON request containing a number.
 }
 ```
 
-**Successful response — HTTP 200:**
+**Successful response — HTTP 200 OK:**
 
 ```json
 {
@@ -62,9 +63,9 @@ Accepts a JSON request containing a number.
 }
 ```
 
-Each valid request updates the running total and count. The response returns the average of all valid numbers received since the server started.
+Each valid request updates the running total and count. The response contains the average of all valid numbers received since the server started.
 
-**Invalid request:**
+**Invalid request example:**
 
 ```json
 {
@@ -72,23 +73,54 @@ Each valid request updates the running total and count. The response returns the
 }
 ```
 
-Returns HTTP 400 with an error message.
+Returns HTTP `400 Bad Request` with an error message.
 
-### Example client requests
+## Testing with Postman
 
-With the server running, open another terminal and run:
+You can use [Postman](https://www.postman.com/downloads/) to test the API manually.
 
-```bash
-curl.exe -X POST "http://localhost:3000/average" -H "Content-Type: application/json" --data-binary '{\"number\":10}'
-```
-
-Then submit another number:
+### 1. Start the server
 
 ```bash
-curl.exe -X POST "http://localhost:3000/average" -H "Content-Type: application/json" --data-binary '{\"number\":20}'
+npm start
 ```
 
-The second response should be:
+### 2. Configure the request
+
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/average`
+- Select **Body → raw → JSON**.
+
+Enter this request body:
+
+```json
+{
+  "number": 10
+}
+```
+
+Click **Send**.
+
+**Expected response — HTTP 200 OK:**
+
+```json
+{
+  "average": 10,
+  "count": 1
+}
+```
+
+### 3. Test the running average
+
+Send another request with this body:
+
+```json
+{
+  "number": 20
+}
+```
+
+Expected response:
 
 ```json
 {
@@ -97,7 +129,23 @@ The second response should be:
 }
 ```
 
-## Run tests
+### 4. Test invalid input
+
+Send this request body:
+
+```json
+{
+  "number": "hello"
+}
+```
+
+Expected result: HTTP `400 Bad Request`, with an error message.
+
+**Note:** The running average is stored in memory and resets when the server restarts. Start with a fresh server when reproducing the examples above.
+
+## Run Automated Tests
+
+Run the test suite with:
 
 ```bash
 npm test
@@ -107,9 +155,9 @@ The automated tests cover running-average calculation and invalid input handling
 
 ## Git Hooks and Conventional Commits
 
-Husky runs Git hooks, and Commitlint validates commit messages using the Conventional Commits format.
+Husky runs Git hooks, including tests before commits. Commitlint validates commit messages using the Conventional Commits format.
 
-Examples:
+Examples of valid commit messages:
 
 - `feat: add average endpoint`
 - `test: add API tests`
@@ -120,7 +168,7 @@ Invalid commit messages are rejected by the commit-message hook.
 ## Design Notes
 
 - Numbers are stored in memory, so the running average resets when the server restarts.
-- The API does not use a database because persistent storage is not required for this assignment.
+- A database is not required for this assignment because persistent storage is outside the specified requirements.
 
 ## License
 
